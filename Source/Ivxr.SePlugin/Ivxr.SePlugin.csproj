@@ -1,15 +1,39 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Iv4xr.SePlugin</RootNamespace>
   </PropertyGroup>
 
+  
+
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\se\major\Sources\Sandbox.Game\Sandbox.Game.csproj" />
-    <ProjectReference Include="..\..\..\..\se\major\Sources\VRage.Game\VRage.Game.csproj" />
-    <ProjectReference Include="..\..\..\..\se\major\Sources\VRage\VRage.csproj" />
+    
     <ProjectReference Include="..\Ivxr.PlugIndependentLib\Ivxr.PlugIndependentLib.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Sandbox.Game">
+      <HintPath>..\..\..\major\Sources\SpaceEngineers\bin\x64\Debug\Bin64\Sandbox.Game.dll</HintPath>
+    </Reference>
+    <Reference Include="VRage">
+      <HintPath>..\..\..\major\Sources\SpaceEngineers\bin\x64\Debug\Bin64\VRage.dll</HintPath>
+    </Reference>
+    <Reference Include="VRage.Game">
+      <HintPath>..\..\..\major\Sources\SpaceEngineers\bin\x64\Debug\Bin64\VRage.Game.dll</HintPath>
+    </Reference>
+    <Reference Include="VRage.Library">
+      <HintPath>..\..\..\major\Sources\SpaceEngineers\bin\x64\Debug\Bin64\VRage.Library.dll</HintPath>
+    </Reference>
+    <Reference Include="VRage.Render">
+      <HintPath>..\..\..\major\Sources\SpaceEngineers\bin\x64\Debug\Bin64\VRage.Render.dll</HintPath>
+    </Reference>
+    <Reference Include="VRage.Math">
+      <HintPath>..\..\..\major\Sources\SpaceEngineers\bin\x64\Debug\Bin64\VRage.Math.dll</HintPath>
+    </Reference>
+    <Reference Include="Sandbox.Common">
+      <HintPath>..\..\..\major\Sources\SpaceEngineers\bin\x64\Debug\Bin64\Sandbox.Common.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
