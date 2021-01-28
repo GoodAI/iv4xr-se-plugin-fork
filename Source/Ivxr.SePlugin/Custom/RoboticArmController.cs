@@ -147,6 +147,7 @@ namespace Iv4xr.SePlugin.Custom
                     //}
 
                     grid.SendGridCloseRequest();
+                    var i = 10;
 
                     // entity.Close();
                 }
