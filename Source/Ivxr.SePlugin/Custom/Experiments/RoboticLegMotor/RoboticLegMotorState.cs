@@ -1,8 +1,8 @@
-﻿using Iv4xr.SePlugin.Custom.Experiments.States;
+﻿using Iv4xr.SePlugin.Custom.Experiments.Common.States;
 
-namespace Iv4xr.SePlugin.Custom.Experiments.RoboticLeg
+namespace Iv4xr.SePlugin.Custom.Experiments.RoboticLegMotor
 {
-    public class RoboticLegState : IExperimentState
+    public class RoboticLegMotorState : IExperimentState
     {
         public bool IsResetInProgress { get; set; }
 

@@ -1,14 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Iv4xr.SePlugin.Custom.Experiments.Commands;
+using Iv4xr.SePlugin.Custom.Experiments.Common.Commands;
 using Sandbox.Game.Entities;
 using Sandbox.Game.Entities.Blocks;
 using Sandbox.Game.Entities.Cube;
 using VRage.Game.Entity;
 
-namespace Iv4xr.SePlugin.Custom.Experiments.RoboticLeg
+namespace Iv4xr.SePlugin.Custom.Experiments.RoboticLegMotor
 {
-    public class RoboticLegController : ExperimentControllerBase<RoboticLegCommand, RoboticLegState>
+    public class RoboticLegMotorController : ExperimentControllerBase<RoboticLegMotorCommand, RoboticLegMotorState>
     {
         private MyMotorStator rotor1;
         private MyMotorStator hinge1;
@@ -16,7 +16,7 @@ namespace Iv4xr.SePlugin.Custom.Experiments.RoboticLeg
         private MyMotorStator hinge3;
         private readonly string gridName;
 
-        public RoboticLegController(string gridName)
+        public RoboticLegMotorController(string gridName)
         {
             this.gridName = gridName;
         }
@@ -66,12 +66,12 @@ namespace Iv4xr.SePlugin.Custom.Experiments.RoboticLeg
         //    return null;
         //}
 
-        public override RoboticLegState Reset()
+        public override RoboticLegMotorState Reset()
         {
             throw new System.NotImplementedException();
         }
 
-        public override RoboticLegState ProcessCommand(RoboticLegCommand command)
+        public override RoboticLegMotorState ProcessCommand(RoboticLegMotorCommand command)
         {
             ConfigureRotor(rotor1, command.Rotor1);
             ConfigureRotor(hinge1, command.Hinge1);
@@ -81,17 +81,17 @@ namespace Iv4xr.SePlugin.Custom.Experiments.RoboticLeg
             return null;
         }
 
-        protected RoboticLegState GetState()
+        protected RoboticLegMotorState GetState()
         {
-            return new RoboticLegState()
+            return new RoboticLegMotorState()
             {
                 // Rotor1 = 
             };
         }
 
-        protected override RoboticLegCommand ConvertCommand(FlatCommand command)
+        protected override RoboticLegMotorCommand ConvertCommand(FlatCommand command)
         {
-            return new RoboticLegCommand()
+            return new RoboticLegMotorCommand()
             {
                 Rotor1 = new RotorCommand()
                 {

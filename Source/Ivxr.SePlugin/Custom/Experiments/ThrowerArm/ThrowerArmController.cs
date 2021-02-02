@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Iv4xr.SePlugin.Custom.Experiments.Commands;
+using Iv4xr.SePlugin.Custom.Experiments.Common.Commands;
 using Sandbox.Game.Entities;
 using Sandbox.Game.Entities.Blocks;
 using Sandbox.Game.Entities.Cube;

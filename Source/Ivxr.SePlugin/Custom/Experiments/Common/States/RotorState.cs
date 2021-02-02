@@ -1,4 +1,4 @@
-﻿namespace Iv4xr.SePlugin.Custom.Experiments.States
+﻿namespace Iv4xr.SePlugin.Custom.Experiments.Common.States
 {
     public class RotorState
     {

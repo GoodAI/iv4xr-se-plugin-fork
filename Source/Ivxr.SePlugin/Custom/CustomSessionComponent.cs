@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Iv4xr.SePlugin.Custom.Experiments;
-using Iv4xr.SePlugin.Custom.Experiments.RoboticLeg;
+using Iv4xr.SePlugin.Custom.Experiments.RoboticLegMotor;
 using Iv4xr.SePlugin.Custom.Experiments.ThrowerArm;
 using Sandbox;
 using Sandbox.Common.ObjectBuilders;
@@ -46,7 +46,7 @@ namespace Iv4xr.SePlugin.Custom
         private RoboticArmController roboticArmController;
         private List<IEnumerator> coroutines = new List<IEnumerator>();
         private List<ThrowerArmController> controllers;
-        private List<RoboticLegController> legControllers;
+        private List<RoboticLegMotorController> legControllers;
 
         public override void UpdateBeforeSimulation()
         {
@@ -287,7 +287,7 @@ namespace Iv4xr.SePlugin.Custom
 
             if (text.Equals("/prefab3", StringComparison.InvariantCultureIgnoreCase))
             {
-                SpawnAlignedToGravityWithOffset("ThrowerArm - WithHinges", new Vector3D(new Vector3(-500, 300, 300)), new Vector3D(), "Test");
+                Utils.SpawnBlueprint("ThrowerArm - WithHinges", new Vector3D(new Vector3(-500, 300, 300)), new Vector3D(), "Test");
             }
 
             if (text.StartsWith("/prefab4", StringComparison.InvariantCultureIgnoreCase))
@@ -309,7 +309,7 @@ namespace Iv4xr.SePlugin.Custom
                         var position = initialPosition + i * offsetX + j * offsetZ;
                         var name = $"ThrowerArm - WithHinges {number}";
 
-                        SpawnAlignedToGravityWithOffset("ThrowerArm - WithHinges", position, new Vector3D(), name);
+                        Utils.SpawnBlueprint("ThrowerArm - WithHinges", position, new Vector3D(), name);
                     }
                 }
             }
@@ -333,7 +333,7 @@ namespace Iv4xr.SePlugin.Custom
                         var position = initialPosition + i * offsetX + j * offsetZ;
                         var name = $"RoboticLeg v1 {number}";
 
-                        SpawnAlignedToGravityWithOffset("RoboticLeg v1", position, new Vector3D(), name);
+                        Utils.SpawnBlueprint("RoboticLeg v1", position, new Vector3D(), name);
                     }
                 }
             }
@@ -343,14 +343,14 @@ namespace Iv4xr.SePlugin.Custom
                 var args = text.Split(' ');
                 var gridSize = int.Parse(args[1]);
 
-                legControllers = new List<RoboticLegController>();
+                legControllers = new List<RoboticLegMotorController>();
 
                 for (int i = 0; i < gridSize * gridSize; i++)
                 {
                     var number = i + 1;
 
                     var name = $"RoboticLeg v1 {number}";
-                    var controller = new RoboticLegController(name);
+                    var controller = new RoboticLegMotorController(name);
                     controller.Init();
                     legControllers.Add(controller);
                 }
@@ -400,8 +400,10 @@ namespace Iv4xr.SePlugin.Custom
                 MyAPIGateway.Players.GetPlayers(players);
                 var player = players[0];
                 var playerPosition = player.Character.PositionComp.GetPosition();
+                var orientation = player.Character.PositionComp.GetOrientation();
 
                 MyAPIGateway.Utilities.ShowMessage("Helper", $"Current position: {playerPosition}");
+                MyAPIGateway.Utilities.ShowMessage("Helper", $"Current orientation: {orientation}");
             }
 
             //if (text.Equals("/exp", StringComparison.InvariantCultureIgnoreCase))
@@ -416,133 +418,7 @@ namespace Iv4xr.SePlugin.Custom
             coroutines.Add(coroutine);
         }
 
-        private static void SpawnAlignedToGravityWithOffset(string name, Vector3D position, Vector3D direction, string newGridName, long ownerId = 0, float gravityOffset = 0, float gravityRotation = 0)
-        {
-            var localBPPath = Path.Combine(MyFileSystem.UserDataPath, "Blueprints", "local");
-            var localBPFullPath = Path.Combine(localBPPath, name, "bp.sbc");
-            MyObjectBuilder_ShipBlueprintDefinition[] blueprints = null;
 
-            if (MyFileSystem.FileExists(localBPFullPath))
-            {
-                MyObjectBuilder_Definitions definitions;
-                if (!MyObjectBuilderSerializer.DeserializeXML(localBPFullPath, out definitions))
-                {
-                    VRage.MyDebug.Fail("Blueprint of name: " + name + " was not found.");
-                    return;
-                }
-
-                blueprints = definitions.ShipBlueprints;
-            }
-
-            if (blueprints == null)
-                return;
-
-            // Calculate transformations
-            Vector3 gravity = MyGravityProviderSystem.CalculateNaturalGravityInPoint(position);
-
-            // Get artificial gravity
-            if (gravity == Vector3.Zero)
-                gravity = MyGravityProviderSystem.CalculateArtificialGravityInPoint(position);
-
-            Vector3D up;
-
-            if (gravity != Vector3.Zero)
-            {
-                gravity.Normalize();
-                up = -gravity;
-                position = position + gravity * gravityOffset;
-                if (direction == Vector3D.Zero)
-                {
-                    direction = Vector3D.CalculatePerpendicularVector(gravity);
-                    if (gravityRotation != 0)
-                    {
-                        var rotationAlongAxis = MatrixD.CreateFromAxisAngle(up, gravityRotation);
-                        direction = Vector3D.Transform(direction, rotationAlongAxis);
-                    }
-                }
-            }
-            else
-            {
-                if (direction == Vector3D.Zero)
-                {
-                    direction = Vector3D.Right;
-                    up = Vector3D.Up;
-                }
-                else
-                {
-                    up = Vector3D.CalculatePerpendicularVector(-direction);
-                }
-            }
-
-            List<MyObjectBuilder_CubeGrid> cubeGrids = new List<MyObjectBuilder_CubeGrid>();
-            foreach (var blueprintDefinition in blueprints)
-            {
-                foreach (var cubeGrid in blueprintDefinition.CubeGrids)
-                {
-                    var gridBuilder = (MyObjectBuilder_CubeGrid) cubeGrid.Clone();
-
-                    gridBuilder.CreatePhysics = true;
-                    gridBuilder.EnableSmallToLargeConnections = true;
-
-                    if (!string.IsNullOrEmpty(newGridName))
-                    {
-                        gridBuilder.Name = cubeGrids.Count > 0 ? (newGridName + " - " + cubeGrids.Count.ToString()) : newGridName;
-                        gridBuilder.DisplayName = cubeGrids.Count > 0 ? (newGridName + " - " + cubeGrids.Count.ToString()) : newGridName;
-                    }
-
-                    //foreach (var block in gridBuilder.CubeBlocks)
-                    //{
-                    //    if (block is MyObjectBuilder_MotorStator motorStator)
-                    //    {
-                    //        motorStator.CurrentAngle = 1.5f;
-                    //        // motorStator.TargetVelocity = 30000;
-                    //    }
-                    //}
-
-                    cubeGrids.Add(gridBuilder);
-                }
-            }
-            if (!MySandboxGame.IsDedicated)
-            {
-                MyHud.PushRotatingWheelVisible();
-            }
-
-            MatrixD worldMatrix0 = MatrixD.CreateWorld(position, direction, up);
-            RelocateGrids(cubeGrids, worldMatrix0);
-
-            MyCubeGrid.RelativeOffset offset = new MyCubeGrid.RelativeOffset();
-            offset.Use = false;
-
-            MyMultiplayer.RaiseStaticEvent(s => MyCubeGrid.TryPasteGrid_Implementation, new MyCubeGrid.MyPasteGridParameters(
-                cubeGrids, false, false, Vector3.Zero, true, offset, MySession.Static.GetComponent<MySessionComponentDLC>().GetAvailableClientDLCsIds()));
-        }
-
-        private static void RelocateGrids(List<MyObjectBuilder_CubeGrid> cubegrids, MatrixD worldMatrix0)
-        {
-            var original = cubegrids[0].PositionAndOrientation.Value.GetMatrix();
-            var invOriginal = Matrix.Invert(original);
-            Matrix orientationDelta = invOriginal * worldMatrix0.GetOrientation(); // matrix from original location to new location
-
-            for (int i = 0; i < cubegrids.Count; i++)
-            {
-                if (!cubegrids[i].PositionAndOrientation.HasValue)
-                    continue;
-
-                MatrixD worldMatrix2 = cubegrids[i].PositionAndOrientation.Value.GetMatrix(); //get original rotation and position
-                var offset = worldMatrix2.Translation - original.Translation; //calculate offset to first pasted grid
-
-                var offsetTr = Vector3.TransformNormal(offset, orientationDelta); // Transform the offset to new orientation
-                worldMatrix2 = worldMatrix2 * orientationDelta; //correct rotation
-
-                Vector3D translation = worldMatrix0.Translation + offsetTr; //correct position
-
-                worldMatrix2.Translation = Vector3D.Zero;
-                worldMatrix2 = MatrixD.Orthogonalize(worldMatrix2);
-                worldMatrix2.Translation = translation;
-
-                cubegrids[i].PositionAndOrientation = new MyPositionAndOrientation(ref worldMatrix2);// Set the corrected position
-            }
-        }
 
         private void GetEntities()
         {

@@ -1,4 +1,4 @@
-﻿using Iv4xr.SePlugin.Custom.Experiments.Commands;
+﻿using Iv4xr.SePlugin.Custom.Experiments.Common.Commands;
 
 namespace Iv4xr.SePlugin.Custom.Experiments.ThrowerArm
 {

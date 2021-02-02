@@ -1,4 +1,4 @@
-﻿namespace Iv4xr.SePlugin.Custom.Experiments.Commands
+﻿namespace Iv4xr.SePlugin.Custom.Experiments.Common.Commands
 {
     public class RotorCommand
     {

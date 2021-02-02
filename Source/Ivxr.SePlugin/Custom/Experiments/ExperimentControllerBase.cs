@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Iv4xr.SePlugin.Custom.Experiments.Commands;
-using Iv4xr.SePlugin.Custom.Experiments.States;
+using Iv4xr.SePlugin.Custom.Experiments.Common.Commands;
+using Iv4xr.SePlugin.Custom.Experiments.Common.States;
 using Sandbox.Game.Entities;
 using Sandbox.Game.Entities.Cube;
 using Sandbox.ModAPI;
@@ -30,7 +30,7 @@ namespace Iv4xr.SePlugin.Custom.Experiments
 
         protected abstract TCommand ConvertCommand(FlatCommand command);
 
-        protected List<MyEntity> GetEntities()
+        protected static List<MyEntity> GetEntities()
         {
             var players = new List<IMyPlayer>();
             MyAPIGateway.Players.GetPlayers(players);
@@ -38,11 +38,13 @@ namespace Iv4xr.SePlugin.Custom.Experiments
             var playerPosition = player.Character.PositionComp.GetPosition();
             var sphere = new BoundingSphereD(playerPosition, radius: 15000.0);
             var entities = MyEntities.GetEntitiesInSphere(ref sphere);
+            var entitiesCopy = entities.ToList();
+            entities.Clear();
 
-            return entities;
+            return entitiesCopy;
         }
 
-        protected List<T> GetEntitiesOfType<T>(List<MyEntity> entities)
+        protected static List<T> GetEntitiesOfType<T>(List<MyEntity> entities)
         {
             return entities
                 .Where(x => x is T)
@@ -50,13 +52,13 @@ namespace Iv4xr.SePlugin.Custom.Experiments
                 .ToList();
         }
 
-        protected T FindByName<T>(string name, List<MyEntity> entities) where T : MyTerminalBlock
+        protected static T FindByName<T>(string name, List<MyEntity> entities) where T : MyTerminalBlock
         {
             return GetEntitiesOfType<T>(entities)
-                .Single(x => x.CustomName.ToString() == name);
+                .Single(x => x.CustomName.ToString() == name); 
         }
 
-        protected void ConfigureRotor(MyMotorStator rotor, RotorCommand command)
+        protected static void ConfigureRotor(MyMotorStator rotor, RotorCommand command)
         {
             if (command == null)
             {
@@ -71,7 +73,7 @@ namespace Iv4xr.SePlugin.Custom.Experiments
             }
         }
 
-        protected RotorState GetRotorState(MyMotorAdvancedStator rotor)
+        protected static RotorState GetRotorState(MyMotorAdvancedStator rotor)
         {
             var state = new RotorState();
 
