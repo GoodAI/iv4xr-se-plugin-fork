@@ -4,7 +4,9 @@ This is a fork of the [iv4xr-se-plugin](https://github.com/iv4xr-project/iv4xr-s
 
 ## Ingame commands
 
-This forks adds several ingame commands which can be activated by opening the chat window (ENTER key by default) and typing the command there. All commands are case-insensitive.
+This fork adds several ingame commands which can be activated by opening the chat window (ENTER key by default) and typing the command there. All commands are case-insensitive.
+
+### General
 
 #### */ToggleSensors*
 
@@ -29,6 +31,51 @@ Can be called after */BDs show* to stop at the currently shown generation.
 #### */BDs stop*
 
 Same as */BDs stop* but also hides all behaviour descriptors.
+
+### Robotic leg grid
+
+#### */grid teleport*
+
+Teleports the player close to the (possibly not yet initialized) grid.
+
+#### */grid spawn \<X\>*
+
+Spawns an **X** by **X** grid and initializes all controllers. Can be called even if there is already an existing grid in the world.
+
+
+#### */grid spawn \<X\> \<Y\>*
+
+Spawns an **X** by **Y** grid and initializes all controllers.
+
+
+#### */grid load \<X\>*
+
+Initializes controlles for an **X** by **X** grid. This command needs to be called when working with an already existing grid after reloading the world.
+
+
+#### */grid load \<X\> \<Y\>*
+
+Initializes controlles for an **X** by **X** grid.
+
+#### */grid random run*
+
+Starts random moves of robotic legs. This command can be called only after the grid is spawned or loaded.
+
+#### */grid random stop*
+
+Stops random moves of robotic legs.
+
+#### */grid clear all*
+
+Removes the grid from the world.
+
+#### */grid clear \<X\> \<Y\>*
+
+Removes an experiment at the position *(X,Y)* (starting at (0,0)).
+
+#### */grid restart \<X\> \<Y\>*
+
+Restarts an experiment at the position *(X,Y)* (starting at (0,0)). This removes the experiment and then pastes the initial state of the blueprint.
 
 ## How to run the game with this plugin
 
