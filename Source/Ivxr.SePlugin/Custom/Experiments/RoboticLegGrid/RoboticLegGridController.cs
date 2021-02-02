@@ -32,11 +32,11 @@ namespace Iv4xr.SePlugin.Custom.Experiments.RoboticLegGrid
                 for (int j = 0; j < GridSizeY; j++)
                 {
                     SpawnExperiment(i, j);
-                    yield return CoroutineUtils.WaitForSeconds(0.01);
+                    yield return CoroutineUtils.WaitForSeconds(0.05);
                 }
             }
 
-            yield return CoroutineUtils.WaitForSeconds(0.5);
+            yield return CoroutineUtils.WaitForSeconds(1);
 
             LoadControllers();
         }
